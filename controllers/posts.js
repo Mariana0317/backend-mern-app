@@ -5,12 +5,24 @@ import PostMessage from "../models/postMessage.js";
 const router = express.Router();
 
 export const getPosts = async (req, res) => {
+  const { page } = req.query;
   try {
-    const postMessages = await PostMessage.find();
+    const LIMIT = 8;
+    const startIndex = (Number(page) - 1) * LIMIT; //ibtenenmos el indice de una pagina especifica
+    const total = await PostMessage.countDocuments({});
 
-    console.log(postMessages);
+    const posts = await PostMessage.find()
+      .sort({ _id: -1 })
+      .limit(LIMIT)
+      .skip(startIndex); //esto es para obtener la publicaciones mas nuevas a las mas viejas
 
-    res.status(200).json(postMessages);
+    res
+      .status(200)
+      .json({
+        data: posts,
+        currentPage: Number(page),
+        numberPages: Math.ceil(total / LIMIT),
+      });
   } catch (error) {
     res.status(404).json({ message: error.message });
   }
