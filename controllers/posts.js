@@ -7,9 +7,9 @@ const router = express.Router();
 export const getPosts = async (req, res) => {
   const { page } = req.query;
   try {
-    const LIMIT = 8;
+    const LIMIT = 8;//esta variable es el nuemro de post por pagina
     const startIndex = (Number(page) - 1) * LIMIT; //ibtenenmos el indice de una pagina especifica
-    const total = await PostMessage.countDocuments({});
+    const total = await PostMessage.countDocuments({});//aqui contamos los post o documents que hay
 
     const posts = await PostMessage.find()
       .sort({ _id: -1 })
@@ -21,7 +21,7 @@ export const getPosts = async (req, res) => {
       .json({
         data: posts,
         currentPage: Number(page),
-        numberPages: Math.ceil(total / LIMIT),
+        numberOfPages: Math.ceil(total / LIMIT),
       });
   } catch (error) {
     res.status(404).json({ message: error.message });
